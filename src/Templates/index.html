@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <title>bases de datos con postgreSQL</title>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+
+</head>
+
+<body>
+    
+    <!-- <h1>bienvenidos</h1>
+
+    <form action="/guardar_personas" method="post">
+        <input type="text" name="nombre">
+        <input type="text" name="apellido">
+        <input type="text" name="telefono">
+        <button type="submit">Guardar</button>
+    </form>
+
+    {% for dato in personas %}
+    <tr>
+        <td>{{dato[1]}}</td>
+        <td>{{dato[2]}}</td>
+        <td>{{dato[3]}}</td>
+    </tr>
+    {%endfor%} -->
+
+    <!-- {% for dato in datos %}
+    <form action="/editar_persona/{{dato.nombre}}" method="post">
+        <input type="text" name="nombre" value="{{dato.nombre}}">
+        <input type="text" name="apellido" value="{{dato.apellido}}">
+        <input type="text" name="telefono" value="{{dato.telefono}}">
+        <button type="submit"> Actualizar</button>
+
+        <a onclick="return confirm('¿estas seguro de borrar el dato? ')" href="/eliminar_persona/{{persona[0]}}">eliminar</a>
+    </form>
+{%endfor%}   -->
+
+    <div class="container pt-4">
+        <h1 class="p-4">Registro de personas</h1>
+        <div class="row">
+            <div class="row">
+                <div class="col-md-4">
+                    {%with messages = get_flashed_messages(with_categories=true)%}
+                        {%if messages%}
+                            {%for category, message in messages%}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>{{message}}</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" arial-label="Close"></button>
+                                </div>
+                            {%endfor%}
+                        {%endif%}
+                    {%endwith%}
+                    <div class="card card-body">
+                        <form id="formulario" action="/guardar_personas", method="post">
+                            <div class="form-group pt-2">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group pt-2">
+                                <label for="apellido">Apellido</label>
+                                <input type="text" class="form-control" name="apellido" id="apellido">
+                            </div>
+
+                            <div class="form-group pt-2">
+                                <label for="telefono">Telefono</label>
+                                <input type="text" class="form-control" name="telefono" id="telefono">
+                            </div>
+                            
+                            <div class="form-group pt-4 d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="boton">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <table class="table table-striped"  id="tabla_resultados">
+                        <thead>
+                            <tr>
+                                <td>Nombre</td>
+                                <td>Apellido</td>
+                                <td>Telefono</td>
+                                <td>Opciones</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for persona in personas%}
+                            <tr>
+                                <td id='tabla_nombre{{persona[0]}}'>{{persona[1]}}</td>
+                                <td id='tabla_apellido{{persona[0]}}'>{{persona[2]}}</td>
+                                <td id='tabla_telefono{{persona[0]}}'>{{persona[3]}}</td>
+                                <td>
+                                    <a onclick="obtenerDatos('{{persona[0]}}')" class="btn btn-secondary btn-sm">Editar</a>
+                                    <a onclick="return confirm('¿Desea eliminar este registro?')" href="{{url_for('eliminar', id_persona=persona[0])}}" class="btn btn-danger btn-delete btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='js/obtenerDatos.js')}}"></script>
+
+    <script>
+        
+        $(document).ready(function (){
+        $('#tabla_resultados').DataTable({
+            "aLengthMenu":[[3,5,10,25,-1],[3,5,10,25,"ALL"]],
+            "iDisplayLength": 3 ,//me muestra de a 3 en la tabla 
+            "language" :{
+                "lengthMenu": "Mostrar _MENU_ registros por pagina",
+                    "search": "Buscar",
+                    "zeroRecords": "Ningun Registro Encontrado",
+                    "info": "Pagina _PAGE_ de _PAGES_",
+                    "infoEmpty": "Ningun Registro Disponinie",
+                    " InfoFiltered" : "(Filtrado de MAX registro(s) totales)",
+                    "paginate": {
+                    "first": "Primero",
+                    "last":  "Ultimo",
+                    "next" : "Siguiente",
+                    "previous":  "Anterior"
+                },
+            }
+
+
+        });
+    });
+    
+    </script>
+</body>
+
+</html>
